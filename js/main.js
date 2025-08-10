@@ -28,11 +28,12 @@ user_name.addEventListener("change", (e) => {
 });
 
 register_btn.addEventListener("click", (e) => {
+  localStorage.setItem("heightest_scour_data", JSON.stringify(scouerData));
   registeration_page.classList.toggle("d-none");
   e.preventDefault();
 });
 
-function reloadw() {
+function reload() {
   let obj = JSON.parse(localStorage.getItem("heightest_scour_data"));
 
   if (obj != null) {
@@ -41,7 +42,7 @@ function reloadw() {
     heightest_scour_scour.innerHTML = obj.userScoure;
   }
 }
-reloadw();
+reload();
 
 reset.addEventListener("click", () => {
   alert("Restart The Game");
@@ -126,13 +127,47 @@ function update(positionRow, positionCol) {
     CreatRandomCell();
   }
 }
+// actions of the game
 
+/* ----------------------- // up , down , left , right ---------------------- */
 document.addEventListener("keydown", function (event) {
+  if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.key)) {
+    event.preventDefault(); // Stop page from scrolling
+  }
   if (event.key === "ArrowUp") checkUp_or_down("up");
   else if (event.key === "ArrowDown") checkUp_or_down("down");
   else if (event.key === "ArrowLeft") checkRight_or_left("left");
   else if (event.key === "ArrowRight") checkRight_or_left("right");
 });
+
+/* ----------- // swipe up , swipe down , swipe left , swipe right ---------- */
+let startX = 0, startY = 0;
+const minDistance = 50; // Minimum movement in px to be considered a swipe
+
+document.addEventListener("touchstart", e => {
+  startX = e.touches[0].clientX;
+  startY = e.touches[0].clientY;
+}, { passive: false });
+
+document.addEventListener("touchmove", e => {
+  e.preventDefault(); // Stop page scroll while swiping
+}, { passive: false });
+
+document.addEventListener("touchend", e => {
+  let dx = e.changedTouches[0].clientX - startX;
+  let dy = e.changedTouches[0].clientY - startY;
+
+  if (Math.max(Math.abs(dx), Math.abs(dy)) < minDistance) {
+    console.log("Tap detected, not a swipe");
+    return; // Ignore if movement is less than 50px
+  }
+
+  if (Math.abs(dx) > Math.abs(dy)) {
+    dx > 0 ? checkRight_or_left("right") : checkRight_or_left("left");
+  } else {
+    dy > 0 ? checkUp_or_down("down") : checkUp_or_down("up");
+  }
+}, { passive: false });
 
 function checkRight_or_left(diriction) {
   for (let row = 0; row < 4; row++) {
@@ -164,6 +199,7 @@ function checkRight_or_left(diriction) {
 }
 
 function checkUp_or_down(diriction) {
+  // this.preventDefault();
   for (let col = 0; col < 4; col++) {
     cells2[col] = [cells[0][col], cells[1][col], cells[2][col], cells[3][col]];
 
