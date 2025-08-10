@@ -39,7 +39,7 @@ header{
     align-items: baseline;
     background-color: #ae9646;
 }
-.hightest-scour{
+.hightest-score{
     position: fixed;
     top: 2%;
     left: 2%;
@@ -48,22 +48,22 @@ header{
     border-radius: 10px;
     text-align: center;
 }
-.hightest-scour h6{
+.hightest-score h6{
     width: max-content;
     margin: auto;
     padding: 0 5px ;
 }
-.hightest-scour hr{
+.hightest-score hr{
     background-color:black ;
     height: 2px;
     width: 75%;
     margin: 10px auto;
 }
 
-#hightest-scour-name{
+#hightest-score-name{
     font-size: smaller;
 }
-#hightest-scour-scour{
+#hightest-score-score{
     font-size: smaller;
     font-weight: 700;
 }
@@ -77,7 +77,7 @@ header h1{
 
 @media screen and (max-width: 766px) {
     
-    header .hightest-scour {
+    header .hightest-score {
         visibility: hidden;
     }
 }
@@ -91,7 +91,7 @@ header h1{
     align-items: center;
     margin-bottom: 30px;
 }
-.game-scoure{
+.game-scoree{
     background-color: brown;
     color: white;
     align-items: center;
@@ -101,7 +101,7 @@ header h1{
     font-weight: bold;
     text-align: center;
 }
-.game-scoure #scoure{
+.game-scoree #scoree{
     display: block;
 }
 .cards{

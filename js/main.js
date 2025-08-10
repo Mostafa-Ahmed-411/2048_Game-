@@ -1,13 +1,13 @@
 let start = document.getElementById("start");
 let reset = document.getElementById("reset");
 let cards = Array.from(document.querySelectorAll(".card"));
-let scoure = document.getElementById("scoure");
+let scoure = document.getElementById("score");
 
 let register_btn = document.getElementById("register-btn");
 let registeration_page = document.getElementById("registeration-page");
 let user_name = document.getElementById("user-name");
-let heightest_scour_name = document.getElementById("heightest-scour-name");
-let heightest_scour_scour = document.getElementById("heightest-scour-scour");
+let heightest_scour_name = document.getElementById("heightest-score-name");
+let heightest_scour_scour = document.getElementById("heightest-score-score");
 
 /* -------------------------------- functions ------------------------------- */
 loadStoredScorerData();
@@ -15,8 +15,7 @@ start.addEventListener("click", startGame);
 reset.addEventListener("click", resetGame);
 register_btn.addEventListener("click", handleRegisterClick);
 
-
-let myScoure = 0;
+let myScore = 0;
 let cells = [
   [0, 0, 0, 0],
   [0, 0, 0, 0],
@@ -25,19 +24,18 @@ let cells = [
 ];
 let cells2 = [[], [], [], []];
 
-let scoureData = {
+let scoreData = {
   userName: "Mostafa Ahmed",
-  userScoure: 0,
+  userScore: 0,
 };
-
 
 /* ---------------------------- // get user name ---------------------------- */
 user_name.addEventListener("change", (e) => {
-  scoureData.userName = e.target.value;
+  scoreData.userName = e.target.value;
 });
 function handleRegisterClick(e) {
   e.preventDefault();
-  localStorage.setItem("highest_score_data", JSON.stringify(scoureData));
+  localStorage.setItem("heightest_scour_data", JSON.stringify(scoreData));
   registeration_page.classList.toggle("d-none");
 }
 /* -------------------------- start & End the game -------------------------- */
@@ -56,7 +54,7 @@ function loadStoredScorerData() {
   let storedData = JSON.parse(localStorage.getItem("heightest_scour_data"));
   if (storedData) {
     heightest_scour_name.innerHTML = storedData.userName;
-    heightest_scour_scour.innerHTML = storedData.userScoure;
+    heightest_scour_scour.innerHTML = storedData.userScore;
   }
 }
 
@@ -78,20 +76,17 @@ function creatRandomCell() {
     let positionCol = Math.floor(Math.random() * 4);
     updateCells(positionRow, positionCol);
   } catch (error) {
-    scoureData.userScoure = myScoure;
+    scoreData.userScore = myScore;
     let obj = JSON.parse(localStorage.getItem("heightest_scour_data"));
     if (obj != null) {
-      if (myScoure >= obj.userScoure) {
-        localStorage.setItem(
-          "heightest_scour_data",
-          JSON.stringify(scoureData)
-        );
+      if (myScore >= obj.userScore) {
+        localStorage.setItem("heightest_scour_data", JSON.stringify(scoreData));
       }
     } else {
-      localStorage.setItem("heightest_scour_data", JSON.stringify(scoureData));
+      localStorage.setItem("heightest_scour_data", JSON.stringify(scoreData));
     }
 
-    alert("Game Over : Scouer = " + myScoure);
+    alert("Game Over : Scouer = " + myScore);
     location.reload();
   }
 }
@@ -185,8 +180,13 @@ function checkRight_or_left(diriction) {
         cells2[row][col] = cells2[row][col] * 2;
         cells2[row][col + 1] = 0;
 
-        myScoure += Number(cells2[row][col]);
-        scoure.innerHTML = `${myScoure}`;
+        myScore += Number(cells2[row][col]);
+        scoure.innerHTML = `${myScore}`;
+        /* ----------------------------------- xx ----------------------------------- */
+        if (myScore > Number(heightest_scour_scour.innerHTML)) {
+          heightest_scour_name.innerHTML = scoreData.userName;
+          heightest_scour_scour.innerHTML = myScore;
+        }
       }
     }
 
@@ -220,8 +220,13 @@ function checkUp_or_down(diriction) {
         cells2[row][col] = cells2[row][col] * 2;
         cells2[row][col + 1] = 0;
 
-        myScoure += Number(cells2[row][col]);
-        scoure.innerHTML = `${myScoure}`;
+        myScore += Number(cells2[row][col]);
+        scoure.innerHTML = `${myScore}`;
+        /* ----------------------------------- xx ----------------------------------- */
+        if (myScore > Number(heightest_scour_scour.innerHTML)) {
+          heightest_scour_name.innerHTML = scoreData.userName;
+          heightest_scour_scour.innerHTML = myScore;
+        }
       }
     }
   }
