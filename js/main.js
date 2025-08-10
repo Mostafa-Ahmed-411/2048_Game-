@@ -9,6 +9,13 @@ let user_name = document.getElementById("user-name");
 let heightest_scour_name = document.getElementById("heightest-scour-name");
 let heightest_scour_scour = document.getElementById("heightest-scour-scour");
 
+/* -------------------------------- functions ------------------------------- */
+loadStoredScorerData();
+start.addEventListener("click", startGame);
+reset.addEventListener("click", resetGame);
+register_btn.addEventListener("click", handleRegisterClick);
+
+
 let myScoure = 0;
 let cells = [
   [0, 0, 0, 0],
@@ -18,99 +25,70 @@ let cells = [
 ];
 let cells2 = [[], [], [], []];
 
-let scouerData = {
+let scoureData = {
   userName: "Mostafa Ahmed",
   userScoure: 0,
 };
 
+
+/* ---------------------------- // get user name ---------------------------- */
 user_name.addEventListener("change", (e) => {
-  scouerData.userName = e.target.value;
+  scoureData.userName = e.target.value;
 });
-
-register_btn.addEventListener("click", (e) => {
-  localStorage.setItem("heightest_scour_data", JSON.stringify(scouerData));
-  registeration_page.classList.toggle("d-none");
+function handleRegisterClick(e) {
   e.preventDefault();
-});
-
-function reload() {
-  let obj = JSON.parse(localStorage.getItem("heightest_scour_data"));
-
-  if (obj != null) {
-    // console.log("false");
-    heightest_scour_name.innerHTML = obj.userName;
-    heightest_scour_scour.innerHTML = obj.userScoure;
+  localStorage.setItem("highest_score_data", JSON.stringify(scoureData));
+  registeration_page.classList.toggle("d-none");
+}
+/* -------------------------- start & End the game -------------------------- */
+function startGame() {
+  for (let i = 0; i < 2; i++) {
+    creatRandomCell();
   }
 }
-reload();
-
-reset.addEventListener("click", () => {
-  alert("Restart The Game");
-  location.reload();
-});
-
-function matching(cells) {
-  for (let row = 0; row < 4; row++) {
-    for (let col = 0; col < 4; col++) {
-      cards[row * 4 + col].value = cells[row][col];
-      cards[row * 4 + col].classList = [];
-      cards[row * 4 + col].classList.add("card");
-    }
+function resetGame() {
+  if (confirm("Restart the game?")) {
+    location.reload();
   }
-  color();
+}
+/* --------------------------- // load stored data -------------------------- */
+function loadStoredScorerData() {
+  let storedData = JSON.parse(localStorage.getItem("heightest_scour_data"));
+  if (storedData) {
+    heightest_scour_name.innerHTML = storedData.userName;
+    heightest_scour_scour.innerHTML = storedData.userScoure;
+  }
 }
 
-function color() {
+/* -------------------------- // updateCells card colors ------------------------- */
+function updateCardColors() {
   cards.forEach((card) => {
-    if (card.value == 0) {
-      card.classList.add("x0");
-    } else if (card.value == 2) {
-      card.classList.add("x2");
-    } else if (card.value == 4) {
-      card.classList.add("x4");
-    } else if (card.value == 8) {
-      card.classList.add("x8");
-    } else if (card.value == 16) {
-      card.classList.add("x16");
-    } else if (card.value == 32) {
-      card.classList.add("x32");
-    } else if (card.value == 64) {
-      card.classList.add("x64");
-    } else if (card.value == 128) {
-      card.classList.add("x128");
-    } else if (card.value == 256) {
-      card.classList.add("x256");
-    } else if (card.value == 512) {
-      card.classList.add("x512");
-    } else if (card.value > 512) {
+    let value = card.value;
+    if (value > 512) {
       card.classList.add("x1024");
+    } else {
+      card.classList.add(`x${value}`);
     }
   });
 }
 
-start.addEventListener("click", function () {
-  for (let loop = 0; loop < 2; loop++) {
-    CreatRandomCell();
-  }
-});
-
-function CreatRandomCell() {
+function creatRandomCell() {
   try {
     let positionRow = Math.floor(Math.random() * 4);
     let positionCol = Math.floor(Math.random() * 4);
-    update(positionRow, positionCol);
+    updateCells(positionRow, positionCol);
   } catch (error) {
-    scouerData.userScoure = myScoure;
+    scoureData.userScoure = myScoure;
     let obj = JSON.parse(localStorage.getItem("heightest_scour_data"));
     if (obj != null) {
       if (myScoure >= obj.userScoure) {
         localStorage.setItem(
           "heightest_scour_data",
-          JSON.stringify(scouerData)
+          JSON.stringify(scoureData)
         );
       }
     } else {
-      localStorage.setItem("heightest_scour_data", JSON.stringify(scouerData));
+      localStorage.setItem("heightest_scour_data", JSON.stringify(scoureData));
     }
 
     alert("Game Over : Scouer = " + myScoure);
@@ -118,16 +96,32 @@ function CreatRandomCell() {
   }
 }
 
-function update(positionRow, positionCol) {
-  if (cells[positionRow][positionCol] == 0) {
-    // console.log("positionRow : " + positionRow + "   positionCol : " + positionCol );
-    cells[positionRow][positionCol] = 2;
-    matching(cells);
+function updateUI(cells) {
+  const cardValues = cells.flat();
+  cards.forEach((card, index) => {
+    card.value = cardValues[index];
+    card.classList = [];
+    card.classList.add("card");
+  });
+  // function updateUI(cells) {
+  //   for (let row = 0; row < 4; row++) {
+  //     for (let col = 0; col < 4; col++) {
+  //       cards[row * 4 + col].value = cells[row][col];
+  //       cards[row * 4 + col].classList = [];
+  //       cards[row * 4 + col].classList.add("card");
+  //     }
+  //   }
+  updateCardColors();
+}
+
+function updateCells(row, col) {
+  if (cells[row][col] === 0) {
+    cells[row][col] = 2;
+    updateUI(cells);
   } else {
-    CreatRandomCell();
+    creatRandomCell();
   }
 }
-// actions of the game
 
 /* ----------------------- // up , down , left , right ---------------------- */
 document.addEventListener("keydown", function (event) {
@@ -141,33 +135,44 @@ document.addEventListener("keydown", function (event) {
 });
 
 /* ----------- // swipe up , swipe down , swipe left , swipe right ---------- */
-let startX = 0, startY = 0;
-const minDistance = 50; // Minimum movement in px to be considered a swipe
+let startX = 0,
+  startY = 0;
+const minDistance = 50;
+document.addEventListener(
+  "touchstart",
+  (e) => {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  },
+  { passive: false }
+);
 
-document.addEventListener("touchstart", e => {
-  startX = e.touches[0].clientX;
-  startY = e.touches[0].clientY;
-}, { passive: false });
+document.addEventListener(
+  "touchmove",
+  (e) => {
+    e.preventDefault(); // Stop page scroll while swiping
+  },
+  { passive: false }
+);
+document.addEventListener(
+  "touchend",
+  (e) => {
+    let dx = e.changedTouches[0].clientX - startX;
+    let dy = e.changedTouches[0].clientY - startY;
 
-document.addEventListener("touchmove", e => {
-  e.preventDefault(); // Stop page scroll while swiping
-}, { passive: false });
-
-document.addEventListener("touchend", e => {
-  let dx = e.changedTouches[0].clientX - startX;
-  let dy = e.changedTouches[0].clientY - startY;
-
-  if (Math.max(Math.abs(dx), Math.abs(dy)) < minDistance) {
-    console.log("Tap detected, not a swipe");
-    return; // Ignore if movement is less than 50px
-  }
-
-  if (Math.abs(dx) > Math.abs(dy)) {
-    dx > 0 ? checkRight_or_left("right") : checkRight_or_left("left");
-  } else {
-    dy > 0 ? checkUp_or_down("down") : checkUp_or_down("up");
-  }
-}, { passive: false });
+    if (Math.max(Math.abs(dx), Math.abs(dy)) < minDistance) {
+      console.log("Tap detected, not a swipe");
+      return; // Ignore if movement is less than 50px
+    }
+    if (Math.abs(dx) > Math.abs(dy)) {
+      dx > 0 ? checkRight_or_left("right") : checkRight_or_left("left");
+    } else {
+      dy > 0 ? checkUp_or_down("down") : checkUp_or_down("up");
+    }
+  },
+  { passive: false }
+);
+/* -------------------------------------------------------------------------- */
 
 function checkRight_or_left(diriction) {
   for (let row = 0; row < 4; row++) {
@@ -194,12 +199,11 @@ function checkRight_or_left(diriction) {
   }
   cells = [...cells2];
 
-  matching(cells);
-  CreatRandomCell();
+  updateUI(cells);
+  creatRandomCell();
 }
 
 function checkUp_or_down(diriction) {
-  // this.preventDefault();
   for (let col = 0; col < 4; col++) {
     cells2[col] = [cells[0][col], cells[1][col], cells[2][col], cells[3][col]];
 
@@ -208,7 +212,6 @@ function checkUp_or_down(diriction) {
 
   for (let row = 0; row < 4; row++) {
     cells2[row] = cells2[row].filter((element) => element != 0);
-    // console.log(cells2[row]);
   }
   /* -------------------------------------------------------------------------- */
   for (let row = 0; row < 4; row++) {
@@ -240,6 +243,6 @@ function checkUp_or_down(diriction) {
       cells2[3][col],
     ];
   }
-  matching(cells);
-  CreatRandomCell();
+  updateUI(cells);
+  creatRandomCell();
 }
